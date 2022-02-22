@@ -2,9 +2,10 @@
 
 (*
 STUDENT NAMES HERE: ...
-
-
+Hallur Hermannsson Aspar
+Úlfur 
 *)
+
 
 module Assignment2
 
@@ -88,8 +89,33 @@ let rec checkPattern (p : pattern) : bool =
 
 // (Write the function checkAllPatterns.)
 
-let rec checkAllPatterns (e : expr) : bool = failwith "Not implemented"
+let rec checkAllPatterns (e : expr) : bool =
+    match e with
+    | Var x -> checkPattern (PVar (x))
+    | Let (expression,e2,e3) ->
+        checkPattern expression && checkAllPatterns e2 && checkAllPatterns e3
+    | Num i -> true
+    | Pair (p1,p2) ->
+        checkAllPatterns p1 && checkAllPatterns p2
+    | Plus (k1,k2) ->
+        checkAllPatterns k1 && checkAllPatterns k2
+    | Times (t1,t2) ->
+        checkAllPatterns t1 && checkAllPatterns t2
+    
 
+
+checkAllPatterns (Let (PPair (PVar "x", PPair (PUnderscore, PVar "x")), Pair (Num 1, Pair (Num 2, Num 3)), Num 4));;
+// val it: bool = false
+checkAllPatterns (Let (PPair (PVar "x", PVar "y"), Pair (Num 1, Pair (Num 2, Num 3)), Let (PPair (PUnderscore, PVar "x"), Var "y", Num 4)));;
+// val it: bool = true
+checkAllPatterns (Let (PPair (PVar "x", PVar "y"), Pair (Num 1, Num 2), Let (PPair (PVar "z", PVar "z"), Pair (Num 3, Num 4), Num 5)));;
+// val it: bool = false
+checkAllPatterns (Pair (Var "x", Var "x"));;
+// val it: bool = true
+checkAllPatterns (Pair (Num 1, Let (PPair (PVar "x", PVar "x"), Num 2, Num 3)));;
+// val it: bool = false
+checkAllPatterns (Pair (Num 1, Let (PPair (PVar "x", PUnderscore), Num 2, Num 3)));;
+// val it: bool = true
 
 type token =
     | NAME of string
