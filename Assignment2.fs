@@ -161,6 +161,8 @@ let rec tokenize (cs : char list) : token list =
     | '\n'::cs -> tokenize cs
     | '('::cs  -> LPAR :: tokenize cs
     | ')'::cs  -> RPAR :: tokenize cs
+    | '_'::cs  -> UNDERSCORE :: tokenize cs
+    | ','::cs  -> COMMA :: tokenize cs
     | c::cs when isDigit c -> tokenizeInt cs (digit2Int c)
     | c::cs when isLowercaseLetter c -> tokenizeWord cs (string c)
     | c::cs -> ERROR c :: tokenize cs
@@ -175,7 +177,12 @@ and tokenizeWord cs (acc : string) =
 
 let lex s = tokenize (string2Chars s)
 
-
+lex "let _ = x in 3";;
+// val it: token list = [LET; UNDERSCORE; EQUAL; NAME "x"; IN; INT 3]
+lex "let x, y = (1, 2) in 3";;
+// val it: token list = [LET; NAME "x"; COMMA; NAME "y"; EQUAL; LPAR; INT 1; COMMA; INT 2; RPAR; IN; INT 3]
+lex "let ((_, x), (z, w)) = p in x + z + w";;
+// val it: token list = [LET; LPAR; LPAR; UNDERSCORE; COMMA; NAME "x"; RPAR; COMMA; LPAR; NAME "z"; COMMA; NAME "w"; RPAR; RPAR; EQUAL; NAME "p"; IN; NAME "x"; PLUS; NAME "z"; PLUS; NAME "w"]
 
 ////////////////////////////////////////////////////////////////////////
 // Problem 3                                                          //
