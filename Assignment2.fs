@@ -3,7 +3,7 @@
 (*
 STUDENT NAMES HERE: ...
 Hallur Hermannsson Aspar
-Úlfur Ingólfsson
+Úlfur Ingólfsson 
 *)
 
 
@@ -314,6 +314,23 @@ let rec patternMatch (p : pattern) (v : value) (env : envir) : envir =
     failwith "Not implemented"
 
 // (Complete the function eval.)
+
+patternMatch PUnderscore (VNum 1) [];;
+// val it: envir = []
+patternMatch (PVar "x") (VNum 1) [];;
+// val it: envir = [("x", VNum 1)]
+patternMatch (PPair (PUnderscore, PUnderscore)) (VNum 1) [];;
+// System.Exception: expected a pair, but given an int
+patternMatch (PPair (PUnderscore, PVar "a")) (VPair (VNum 1, VPair (VNum 10, VNum 20))) [];;
+// val it: envir = [("a", VPair (VNum 10, VNum 20))]
+patternMatch (PPair (PUnderscore, PVar "a")) (VPair (VNum 1, VPair (VNum 10, VNum 20))) [("x", VNum 50); ("y", VPair (VNum 51, VNum 52))];;
+// val it: envir = [("a", VPair (VNum 10, VNum 20)); ("x", VNum 50); ("y", VPair (VNum 51, VNum 52))]
+patternMatch (PPair (PUnderscore, PPair (PVar "a", PVar "b"))) (VPair (VNum 1, VPair (VNum 10, VNum 20))) [];;
+// val it: envir = [("b", VNum 20); ("a", VNum 10)]
+patternMatch (PPair (PPair (PUnderscore, PUnderscore), PPair (PVar "a", PVar "b"))) (VPair (VNum 1, VPair (VNum 10, VNum 20))) [];;
+// System.Exception: expected a pair, but given an int
+
+
 
 let rec eval (e : expr) (env : envir) : value =
     match e with
