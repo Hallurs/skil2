@@ -252,7 +252,22 @@ let parse (ts : token list) : expr =
     if ts = [] then e else failwithf "unconsumed tokens"
 let lexParse (s : string) : expr = parse (lex s)
 
-
+parse [LET; UNDERSCORE; EQUAL; NAME "x"; IN; INT 3];;
+// val it: expr = Let (PUnderscore, Var "x", Num 3)
+parse [LET; NAME "x"; COMMA; NAME "y"; EQUAL; LPAR; INT 1; COMMA; INT 2; RPAR; IN; INT 3];;
+// val it: expr = Let (PPair (PVar "x", PVar "y"), Pair (Num 1, Num 2), Num 3)
+parse [LET; LPAR; LPAR; UNDERSCORE; COMMA; NAME "x"; RPAR; COMMA; LPAR; NAME "z"; COMMA; NAME "w"; RPAR; RPAR; EQUAL; NAME "p"; IN; NAME "x"; PLUS; NAME "z"; PLUS; NAME "w"];;
+// val it: expr = Let (PPair (PPair (PUnderscore, PVar "x"), PPair (PVar "z", PVar "w")), Var "p", Plus (Var "x", Plus (Var "z", Var "w")))
+parse [LET; NAME "x"; COMMA; NAME "y"; COMMA; NAME "z"; EQUAL; INT 1];;
+// System.Exception: let without equals sign
+parse [LET; LPAR; NAME "x"; COMMA; NAME "y"; RPAR; COMMA; NAME "z"; EQUAL; INT 1; IN; INT 2];;
+// val it: expr = Let (PPair (PPair (PVar "x", PVar "y"), PVar "z"), Num 1, Num 2)
+parse [LET; INT 1; EQUAL; INT 2; IN; INT 3];;
+// System.Exception: not a pattern
+parse [LET; LPAR; NAME "x"; COMMA; NAME "y"; PLUS; INT 1; RPAR; EQUAL; INT 5; IN; INT 6];;
+// System.Exception: left paren without right paren
+parse [LET; LPAR; LPAR; NAME "x"; COMMA; LPAR; LPAR; NAME "y"; RPAR; RPAR; RPAR; RPAR; EQUAL; NAME "p"; IN; NAME "q"; PLUS; NAME "r"];;
+// val it: expr = Let (PPair (PVar "x", PVar "y"), Var "p", Plus (Var "q", Var "r"))
 
 
 
