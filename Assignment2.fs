@@ -3,7 +3,7 @@
 (*
 STUDENT NAMES HERE: ...
 Hallur Hermannsson Aspar
-Úlfur 
+Úlfur Ingólfsson
 *)
 
 
@@ -235,9 +235,15 @@ and parseFactor (ts : token list) : expr * token list =
         | _ -> failwith "left paren without right paren"
     | _  -> failwith "not a factor"
 and parsePattern (ts : token list) : pattern * token list =
-    parseSimplePattern ts
+    let psx, ts = parseSimplePattern ts
+    match ts with
+    | COMMA :: ts -> 
+        let psy, ts = parseSimplePattern ts
+        PPair (psx, psy), ts
+    | _ -> psx, ts
 and parseSimplePattern (ts : token list) : pattern * token list =
     match ts with
+    | UNDERSCORE :: ts -> PUnderscore, ts
     | NAME x :: ts -> PVar x, ts
     | LPAR :: ts ->
         let p, ts = parsePattern ts
