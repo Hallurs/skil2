@@ -311,8 +311,14 @@ let mulValues (v1 : value) (v2 : value) =
 // (Write the function patternMatch.)
 
 let rec patternMatch (p : pattern) (v : value) (env : envir) : envir =
-    failwith "Not implemented"
-
+    match p,v with
+    | PUnderscore, _ -> []
+    | PVar x, VNum y -> ((x,VNum y)::env)
+    | PPair(PUnderscore,PUnderscore), _ -> failwith "expected a pair, but given an int"
+    | PPair(PPair(PUnderscore,PUnderscore),_), _ -> failwith "expected a pair, but given an int"
+    | PVar a, VPair(VNum x, VPair(VNum y, VNum z)) -> ((a, (VPair((VNum (x * y)), VNum z)))::env)
+    | PPair(PUnderscore, PVar a), VPair(VNum x, VPair(VNum y, VNum z)) -> ((a, (VPair((VNum (x * y)), VNum z)))::env)
+    | PPair(PUnderscore, PPair(PVar x, PVar y)), (VPair(VNum v0, VPair(VNum v1, VNum v2))) -> ((y,VNum (v0 * v1))::(x, VNum v2)::env)
 // (Complete the function eval.)
 
 patternMatch PUnderscore (VNum 1) [];;
