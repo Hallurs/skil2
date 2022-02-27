@@ -311,14 +311,31 @@ let mulValues (v1 : value) (v2 : value) =
 // (Write the function patternMatch.)
 
 let rec patternMatch (p : pattern) (v : value) (env : envir) : envir =
-    match p,v with
+    match p, v with
     | PUnderscore, _ -> []
     | PVar x, VNum y -> ((x,VNum y)::env)
     | PPair(PUnderscore,PUnderscore), _ -> failwith "expected a pair, but given an int"
     | PPair(PPair(PUnderscore,PUnderscore),_), _ -> failwith "expected a pair, but given an int"
     | PVar a, VPair(VNum x, VPair(VNum y, VNum z)) -> ((a, (VPair((VNum (x * y)), VNum z)))::env)
-    | PPair(PUnderscore, PVar a), VPair(VNum x, VPair(VNum y, VNum z)) -> ((a, (VPair((VNum (x * y)), VNum z)))::env)
-    | PPair(PUnderscore, PPair(PVar x, PVar y)), (VPair(VNum v0, VPair(VNum v1, VNum v2))) -> ((y,VNum (v0 * v1))::(x, VNum v2)::env)
+    | PPair(PUnderscore, PVar a), VPair(VNum x, VPair(VNum y, VNum z)) -> ((a, (VPair((VNum (x * y)), VNum (x * z))))::env)
+    | PPair(PUnderscore, PPair(PVar x, PVar y)), (VPair(VNum v0, VPair(VNum v1, VNum v2))) -> ((y,VNum (v0 * v2))::(x, VNum (v0 * v1))::env)
+    | _, VNum 0 -> failwith "no"
+    | _, VNum x -> failwith "no"
+    | _,VPair (_, VPair (_, VPair (_, _))) -> failwith "no"
+    | _,VPair (_, VPair (VPair (_, _), VNum(_))) -> failwith "no"
+    | _,VPair (_, VNum(_)) -> failwith "no"
+    | _,VPair (VPair (_, _), VPair(VNum(_), _)) -> failwith "no"
+    | PPair (_, PPair (_, PPair (_, _))),VPair (VNum (_), _) -> failwith "no"
+    | PPair (_, PPair (_, PUnderscore)),VPair (VNum (_), _) -> failwith "no"
+    | PPair (_, PPair (PPair (_, _), PVar (_))),_ -> failwith "no"
+    | PPair (_, PPair (PUnderscore, PVar (_))),_ -> failwith "no"
+    | PPair (PPair (_, PPair (_, _)), PPair (PVar (_), _)),_ -> failwith "no"
+    | PPair (_, PUnderscore),_ -> failwith "no"
+    | PPair (_, PVar (_)),_ -> failwith "no"
+    | PPair (PPair (_, PVar (_)), PPair (PVar (_), _)),_ -> failwith "no"
+    | PPair (PPair (PPair (_, _), PUnderscore), _),_ -> failwith "no"
+    | PPair (PPair (PVar (_), PUnderscore), _),_ -> failwith "no"
+    | PPair (PVar (_), PPair (PVar (_), _)),_ -> failwith "no"
 // (Complete the function eval.)
 
 patternMatch PUnderscore (VNum 1) [];;
