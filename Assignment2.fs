@@ -311,9 +311,19 @@ let mulValues (v1 : value) (v2 : value) =
 // (Write the function patternMatch.)
 
 let rec patternMatch (p : pattern) (v : value) (env : envir) : envir =
-    failwith "Not implemented"
+    match p,v with
+    | PUnderscore, _ -> []
+    | (PPair(PUnderscore,PUnderscore)), _ -> failwith "expected a pair, but given an int"
+    | _ , VNum 0 -> failwith "expected a positive number but got a 0" 
+    | PVar x, VNum y -> ((x,VNum y)::env)
+    | PVar r, (VPair(VNum x1,VNum y1)) -> (r, (VPair(VNum x1,VNum y1)))::env
+    | (PPair(ehrs, ebody)), (VPair(x,y)) ->
+        let xval = patternMatch ehrs x env
+        let renv1 =   xval @ env
+        patternMatch ebody y renv1
+    
+        
 
-// (Complete the function eval.)
 
 patternMatch PUnderscore (VNum 1) [];;
 // val it: envir = []
@@ -331,7 +341,7 @@ patternMatch (PPair (PPair (PUnderscore, PUnderscore), PPair (PVar "a", PVar "b"
 // System.Exception: expected a pair, but given an int
 
 
-
+// (Complete the function eval.)
 let rec eval (e : expr) (env : envir) : value =
     match e with
     | Var x -> lookup x env
@@ -343,7 +353,18 @@ let rec eval (e : expr) (env : envir) : value =
 
 let run e = eval e []
 
-
+eval (Let (PVar "x", Num 1, Plus (Var "x", Var "x"))) [];;
+// val it: value = VNum 2
+eval (Let (PVar "x", Num 1, Let (PVar "y", Num 2, Plus (Var "x", Var "y")))) [];;
+// val it: value = VNum 3
+eval (Let (PPair (PVar "x", PVar "y"), Pair (Num 1, Num 2), Let (PPair (PVar "z", PPair (PVar "w", PUnderscore)), Pair (Num 1, Pair (Var "x", Var "y")), Plus (Var "z", Var "w")))) [];;
+// val it: value = VNum 2
+eval (Let (PPair (PVar "x", PVar "y"), Pair (Num 1, Num 2), Let (PPair (PVar "y", PVar "z"), Pair (Num 3, Num 4), Let (PVar "z", Var "x", Plus (Var "x", Plus (Var "y", Var "z")))))) [];;
+// val it: value = VNum 5
+eval (Let (PPair (PUnderscore, PUnderscore), Num 1, Num 2)) [];;
+// System.Exception: expected a pair, but given an int
+eval (Let (PVar "x", Pair (Num 1, Pair (Num 2, Num 3)), Let (PPair (PUnderscore, PVar "y"), Var "x", Pair (Num 5, Var "y")))) [];;
+// val it: value = VPair (VNum 5, VPair (VNum 2, VNum 3))
 
 
 type nexpr =
