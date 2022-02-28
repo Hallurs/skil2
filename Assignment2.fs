@@ -313,11 +313,12 @@ let mulValues (v1 : value) (v2 : value) =
 let rec patternMatch (p : pattern) (v : value) (env : envir) : envir =
     match p,v with
     | PUnderscore, _ -> []
-    | (PPair(PUnderscore,PUnderscore)), _ -> failwith "expected a pair, but given an int"
+    | PPair(PUnderscore,PUnderscore), _ -> failwith "expected a pair, but given an int"
     | _ , VNum 0 -> failwith "expected a positive number but got a 0" 
     | PVar x, VNum y -> ((x,VNum y)::env)
-    | PVar r, (VPair(VNum x1,VNum y1)) -> (r, (VPair(VNum x1,VNum y1)))::env
-    | (PPair(ehrs, ebody)), (VPair(x,y)) ->
+    | PVar r, VPair(VNum x1,VNum y1) -> (r, (VPair(VNum x1,VNum y1)))::env
+    | PVar b, VPair(VNum x2,VPair(o,i)) -> (b, (VPair(VNum x2,VPair(o,i))))::env
+    | PPair(ehrs, ebody), VPair(x,y) ->
         let xval = patternMatch ehrs x env
         let renv1 =   xval @ env
         patternMatch ebody y renv1
@@ -345,7 +346,10 @@ patternMatch (PPair (PPair (PUnderscore, PUnderscore), PPair (PVar "a", PVar "b"
 let rec eval (e : expr) (env : envir) : value =
     match e with
     | Var x -> lookup x env
-    | Let (p, erhs, ebody) -> failwith "Not implemented"
+    | Let (p, erhs, ebody) -> 
+        let banv = patternMatch p (eval erhs env) env
+        let renv2 = banv @ env
+        eval ebody renv2
     | Pair (e1, e2) -> VPair (eval e1 env, eval e2 env)
     | Num i -> VNum i
     | Plus (e1, e2) -> addValues (eval e1 env) (eval e2 env)
