@@ -315,9 +315,7 @@ let rec patternMatch (p : pattern) (v : value) (env : envir) : envir =
     | PUnderscore, _ -> []
     | PPair(PUnderscore,PUnderscore), _ -> failwith "expected a pair, but given an int"
     | _ , VNum 0 -> failwith "expected a positive number but got a 0" 
-    | PVar x, VNum y -> ((x,VNum y)::env)
-    | PVar r, VPair(VNum x1,VNum y1) -> (r, (VPair(VNum x1,VNum y1)))::env
-    | PVar b, VPair(VNum x2,VPair(o,i)) -> (b, (VPair(VNum x2,VPair(o,i))))::env
+    | PVar x, v -> (x, v)::env
     | PPair(ehrs, ebody), VPair(x,y) ->
         let xval = patternMatch ehrs x env
         let renv1 =   xval @ env
