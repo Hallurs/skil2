@@ -312,7 +312,7 @@ let mulValues (v1 : value) (v2 : value) =
 
 let rec patternMatch (p : pattern) (v : value) (env : envir) : envir =
     match p,v with
-    | PUnderscore, _ -> []
+    | PUnderscore, _ -> env
     | PPair(PUnderscore,PUnderscore), _ -> failwith "expected a pair, but given an int"
     | _ , VNum 0 -> failwith "expected a positive number but got a 0" 
     | PVar x, v -> (x, v)::env
