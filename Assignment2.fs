@@ -565,11 +565,11 @@ reval (rcomp (NFst (NFst (NSnd (NPair (NNum 1, NPair (NSnd (NVar "x"), NFst (NVa
 
 // (ii) Functions for the answers to 6ii
 reval (rcomp (NNum 701)) [] [];;
-//[1; 701]
+// [1; 701]
 reval (rcomp (NPair (NNum 701, NNum 702))) [] [];;
-//[2; 1; 702; 1; 701]
+// [2; 1; 702; 1; 701]
 reval (rcomp (NPair((NNum 700, NPair (NNum 701, NNum 702))))) [] [];;
-//[2; 2; 1; 702; 1; 701; 1; 700]
+// [2; 2; 1; 702; 1; 701; 1; 700]
 reval (rcomp (NPair(NPair((NNum 700, NPair (NNum 701, NNum 702))), NNum 703))) [] [];;
-//[2; 1; 703; 2; 2; 1; 702; 1; 701; 1; 700]
+// [2; 1; 703; 2; 2; 1; 702; 1; 701; 1; 700]
 
