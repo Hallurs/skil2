@@ -518,23 +518,26 @@ let rec reval (inss : rcode) (stk : stack) (renv : renvir) : int =
 
 (*
 ANSWER 6(i) HERE:
-
+40,(43,(42,41),((48,47),(46,45))
 *)
 
 (*
 ANSWER 6(ii) HERE:
-
+1) [1;701]
+2) [2;1;702;1;701]
+3) [2;2;1;702;1;701;1;700]
+4) [2;2;1;703;2;2;1;702;1;701;2;1;700]
 *)
 
 
 // (iii) (Write the functions rcompPair, rcompFst, rcompSnd used by rcomp.)
 
 let rcompPair (r1 : rcode) (r2 : rcode) : rcode =
-    failwith "Not implemented"
+    r1 @ r2 @ [RPair]
 let rcompFst (r : rcode) : rcode =
-    failwith "Not implemented"
+    r @ [RUnpair] @ [RPop]
 let rcompSnd (r : rcode) : rcode =
-    failwith "Not implemented"
+    r @ [RUnpair]
 
 let rec rcomp (e : nexpr) : rcode =
     match e with
@@ -547,6 +550,16 @@ let rec rcomp (e : nexpr) : rcode =
     | NPlus (e1, e2) -> rcomp e1 @ rcomp e2 @ [RAdd]
     | NTimes (e1, e2) -> rcomp e1 @ rcomp e2 @ [RMul]
 
-
-
+reval (rcomp (NFst (NFst (NVar "x")))) [] ["x", [2;2;1;33;1;32;2;1;31;1;30]];;
+// val it: int = 30
+reval (rcomp (NSnd (NSnd (NVar "x")))) [] ["x", [2;2;1;33;1;32;2;1;31;1;30]];;
+// val it: int = 33
+reval (rcomp (NSnd (NFst (NVar "x")))) [] ["x", [2;2;1;33;1;32;2;1;31;1;30]];;
+// val it: int = 31
+reval (rcomp (NFst (NPair (NNum 1, NNum 2)))) [] [];;
+// val it: int = 1
+reval (rcomp (NSnd (NPair (NNum 1, NNum 2)))) [] [];;
+// val it: int = 2
+reval (rcomp (NFst (NFst (NSnd (NPair (NNum 1, NPair (NSnd (NVar "x"), NFst (NVar "x")))))))) [] ["x", [2;2;1;33;1;32;2;1;31;1;30]];;
+// val it: int = 32
 
