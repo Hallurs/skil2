@@ -584,7 +584,7 @@ reval (rcomp (NPair(NPair((NNum 700, NPair (NNum 701, NNum 702))), NNum 703))) [
 
 //---------------------------------------------------------------------------------------
 
-//  (i) Functions for the answer to 6i
+//  (i) Functions for the answers to 6i
 reval (rcomp (NNum 40)) [] [];;
 // [1; 40]
 reval (rcomp (NPair(NPair(NNum 41, NNum 42), NNum 43))) [] [];;
@@ -594,3 +594,4 @@ reval (rcomp (NPair(NPair(NNum 45, NNum 46), NPair(NNum 47, NNum 48)))) [] [];;
 
 //  all 3 values together
 //  [1; 40; 2; 1; 43; 2; 1; 42; 1; 41; 2; 2; 1; 48; 1; 47; 2; 1; 46; 1; 45]
+
