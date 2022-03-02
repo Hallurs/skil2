@@ -523,10 +523,10 @@ ANSWER 6(i) HERE:
 
 (*
 ANSWER 6(ii) HERE:
-1) [1;701]
-2) [2;1;702;1;701]
-3) [2;2;1;702;1;701;1;700]
-4) [2;2;1;703;2;2;1;702;1;701;2;1;700]
+1) [1; 701]
+2) [2; 1; 702; 1; 701]
+3) [2; 2; 1; 702; 1; 701; 1; 700]
+4) [2; 1; 703; 2; 2; 1; 702; 1; 701; 1; 700]
 *)
 
 
@@ -562,4 +562,14 @@ reval (rcomp (NSnd (NPair (NNum 1, NNum 2)))) [] [];;
 // val it: int = 2
 reval (rcomp (NFst (NFst (NSnd (NPair (NNum 1, NPair (NSnd (NVar "x"), NFst (NVar "x")))))))) [] ["x", [2;2;1;33;1;32;2;1;31;1;30]];;
 // val it: int = 32
+
+// (ii) Functions for the answers to 6ii
+reval (rcomp (NNum 701)) [] [];;
+//[1; 701]
+reval (rcomp (NPair (NNum 701, NNum 702))) [] [];;
+//[2; 1; 702; 1; 701]
+reval (rcomp (NPair((NNum 700, NPair (NNum 701, NNum 702))))) [] [];;
+//[2; 2; 1; 702; 1; 701; 1; 700]
+reval (rcomp (NPair(NPair((NNum 700, NPair (NNum 701, NNum 702))), NNum 703))) [] [];;
+//[2; 1; 703; 2; 2; 1; 702; 1; 701; 1; 700]
 
